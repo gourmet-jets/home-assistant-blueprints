@@ -1,181 +1,141 @@
-# Blueprint: Send Alexa Action
-#
-# Execute an action (info skill / sound / text command) on one or more Alexa
-# devices via the official `alexa_devices` integration.
-#
-# Inspired by: https://github.com/TheAppleFreak/home-assistant-blueprints
-# Actions:      https://www.home-assistant.io/integrations/alexa_devices/#list-of-actions
 blueprint:
   name: Send Alexa Action
-  description: >-
-    # Alexa Devices - Send Action
-
-    Execute an action on one or more Alexa devices.
-
-    You can choose between three actions from the official `alexa_devices`
-    integration:
-
-    - **Info Skill** - run a built-in info skill (weather, date, time, flash
-      briefing, tell a joke, ...)
-    - **Play Sound** - play a built-in Alexa sound (doorbell chime, barking
-      dog, trumpet bugle, ...)
-    - **Text Command** - send a text command as if you had spoken it aloud
-      ("what's the time", "set volume to 5", ...)
-
-    ## How to use
-
-    1. Pick the **Action Type** you want to execute.
-    2. Fill in the action-specific parameter (the relevant field is shown
-       automatically based on the chosen action type).
-    3. Select one or more **Alexa Devices** to target. Leave empty to send to
-       all Alexa devices known to Home Assistant.
-
-    ## Requirements
-
-    - Home Assistant 2025.6.0 or later
-    - Alexa Devices integration (`alexa_devices`) configured and enabled
-
-    ## Actions used
-
-    - `alexa_devices.send_info_skill`
-    - `alexa_devices.send_sound`
-    - `alexa_devices.send_text_command`
-
-    Each service requires a `device_id` plus the action-specific parameter.
+  description: "# Alexa Devices - Send Action\nExecute an action on one or more Alexa\
+    \ devices.\nYou can choose between three actions from the official `alexa_devices`\
+    \ integration:\n- **Info Skill** - run a built-in info skill (weather, date, time,\
+    \ flash\n  briefing, tell a joke, ...)\n- **Play Sound** - play a built-in Alexa\
+    \ sound (doorbell chime, barking\n  dog, trumpet bugle, ...)\n- **Text Command**\
+    \ - send a text command as if you had spoken it aloud\n  (\"what's the time\"\
+    , \"set volume to 5\", ...)\n\n## How to use\n1. Pick the **Action Type** you\
+    \ want to execute. 2. Fill in the action-specific parameter (the relevant field\
+    \ is shown\n   automatically based on the chosen action type).\n3. Select one\
+    \ or more **Alexa Devices** to target. Leave empty to send to\n   all Alexa devices\
+    \ known to Home Assistant.\n\n## Requirements\n- Home Assistant 2025.6.0 or later\
+    \ - Alexa Devices integration (`alexa_devices`) configured and enabled\n## Actions\
+    \ used\n- `alexa_devices.send_info_skill` - `alexa_devices.send_sound` - `alexa_devices.send_text_command`\n\
+    Each service requires a `device_id` plus the action-specific parameter."
   domain: script
   homeassistant:
     min_version: 2025.6.0
   author: Gourmet Jets
   source_url: https://github.com/gourmet-jets/home-assistant-blueprints/blob/main/scripts/alexa_devices.yaml
   icon: mdi:amazon-alexa
-  fields:
-    devices:
-      name: Alexa Devices
-      description: >-
-        The Alexa device(s) to target. If left empty, the action is sent to
-        every Alexa device known to Home Assistant.
-      selector:
-        entity:
-          integration: alexa_devices
-          multiple: true
-      required: false
-    action_type:
-      name: Action Type
-      description: The type of Alexa action to execute.
-      required: true
-      default: info_skill
-      selector:
-        select:
-          options:
-            - label: Info Skill
-              value: info_skill
-            - label: Play Sound
-              value: send_sound
-            - label: Text Command
-              value: send_text_command
-          multiple: false
-    info_skill:
-      name: Info Skill
-      description: >-
-        The info skill to run, e.g. `weather`, `date`, `time`, `flash_briefing`
-        or `tell_joke`. Choose from the list or enter a custom skill id.
-      selector:
-        select:
-          options:
-            - label: Weather
-              value: weather
-            - label: Date
-              value: date
-            - label: Time
-              value: time
-            - label: Flash Briefing
-              value: flash_briefing
-            - label: Tell a Joke
-              value: tell_joke
-          custom_value: true
-          multiple: false
-      condition: "{{ action_type == 'info_skill' }}"
-    sound:
-      name: Sound
-      description: >-
-        The built-in Alexa sound to play, e.g.
-        `amzn_sfx_doorbell_chime_01`, `amzn_sfx_dog_bark_01` or
-        `amzn_sfx_trumpet_bugle_01`. Choose from the list or enter a custom
-        sound id.
-      selector:
-        select:
-          options:
-            - label: Doorbell Chime 01
-              value: amzn_sfx_doorbell_chime_01
-            - label: Doorbell Chime 02
-              value: amzn_sfx_doorbell_chime_02
-            - label: Doorbell Chime 03
-              value: amzn_sfx_doorbell_chime_03
-            - label: Dog Bark 01
-              value: amzn_sfx_dog_bark_01
-            - label: Dog Bark 02
-              value: amzn_sfx_dog_bark_02
-            - label: Trumpet Bugle 01
-              value: amzn_sfx_trumpet_bugle_01
-            - label: Trumpet Bugle 02
-              value: amzn_sfx_trumpet_bugle_02
-            - label: Trumpet Bugle 03
-              value: amzn_sfx_trumpet_bugle_03
-            - label: Trumpet Bugle 04
-              value: amzn_sfx_trumpet_bugle_04
-          custom_value: true
-          multiple: false
-      condition: "{{ action_type == 'send_sound' }}"
-    text_command:
-      name: Text Command
-      description: >-
-        The command to send, written exactly as you would say it out loud,
-        e.g. "what's the time" or "set the volume to 5".
-      selector:
-        text:
-          multiline: true
-      condition: "{{ action_type == 'send_text_command' }}"
-
 mode: single
-max: 10
-
 variables:
-  target_devices: >-
-    {%- if devices is defined and devices | length > 0 -%}
-      {{ devices }}
-    {%- else -%}
-      {{ integration_entities('alexa_devices') | list }}
-    {%- endif -%}
-
+  target_devices: "{%- if devices is defined and devices | length > 0 -%}\n  {{ devices\
+    \ }}\n{%- else -%}\n  {{ integration_entities('alexa_devices') | list }}\n{%-\
+    \ endif -%}"
 sequence:
-  - repeat:
-      for_each: "{{ target_devices }}"
-      sequence:
-        - choose:
-            - conditions:
-                - condition: template
-                  value_template: "{{ action_type == 'info_skill' }}"
-              sequence:
-                - service: alexa_devices.send_info_skill
-                  data:
-                    device_id: "{{ repeat.item }}"
-                    info_skill: "{{ info_skill }}"
-            - conditions:
-                - condition: template
-                  value_template: "{{ action_type == 'send_sound' }}"
-              sequence:
-                - service: alexa_devices.send_sound
-                  data:
-                    device_id: "{{ repeat.item }}"
-                    sound: "{{ sound }}"
-            - conditions:
-                - condition: template
-                  value_template: "{{ action_type == 'send_text_command' }}"
-              sequence:
-                - service: alexa_devices.send_text_command
-                  data:
-                    device_id: "{{ repeat.item }}"
-                    text_command: "{{ text_command }}"
-          default:
-            - stop: "Unknown action type selected"
-              error: true
+- repeat:
+    for_each: '{{ target_devices }}'
+    sequence:
+    - choose:
+      - conditions:
+        - condition: template
+          value_template: '{{ action_type == ''info_skill'' }}'
+        sequence:
+        - service: alexa_devices.send_info_skill
+          data:
+            device_id: '{{ repeat.item }}'
+            info_skill: '{{ info_skill }}'
+      - conditions:
+        - condition: template
+          value_template: '{{ action_type == ''send_sound'' }}'
+        sequence:
+        - service: alexa_devices.send_sound
+          data:
+            device_id: '{{ repeat.item }}'
+            sound: '{{ sound }}'
+      - conditions:
+        - condition: template
+          value_template: '{{ action_type == ''send_text_command'' }}'
+        sequence:
+        - service: alexa_devices.send_text_command
+          data:
+            device_id: '{{ repeat.item }}'
+            text_command: '{{ text_command }}'
+      default:
+      - stop: Unknown action type selected
+        error: true
+fields:
+  devices:
+    name: Alexa Devices
+    description: The Alexa device(s) to target. If left empty, the action is sent
+      to every Alexa device known to Home Assistant.
+    selector:
+      entity:
+        integration: alexa_devices
+        multiple: true
+    required: false
+  action_type:
+    name: Action Type
+    description: The type of Alexa action to execute.
+    required: true
+    default: info_skill
+    selector:
+      select:
+        options:
+        - label: Info Skill
+          value: info_skill
+        - label: Play Sound
+          value: send_sound
+        - label: Text Command
+          value: send_text_command
+        multiple: false
+  info_skill:
+    name: Info Skill
+    description: The info skill to run, e.g. `weather`, `date`, `time`, `flash_briefing`
+      or `tell_joke`. Choose from the list or enter a custom skill id.
+    selector:
+      select:
+        options:
+        - label: Weather
+          value: weather
+        - label: Date
+          value: date
+        - label: Time
+          value: time
+        - label: Flash Briefing
+          value: flash_briefing
+        - label: Tell a Joke
+          value: tell_joke
+        custom_value: true
+        multiple: false
+    condition: '{{ action_type == ''info_skill'' }}'
+  sound:
+    name: Sound
+    description: The built-in Alexa sound to play, e.g. `amzn_sfx_doorbell_chime_01`,
+      `amzn_sfx_dog_bark_01` or `amzn_sfx_trumpet_bugle_01`. Choose from the list
+      or enter a custom sound id.
+    selector:
+      select:
+        options:
+        - label: Doorbell Chime 01
+          value: amzn_sfx_doorbell_chime_01
+        - label: Doorbell Chime 02
+          value: amzn_sfx_doorbell_chime_02
+        - label: Doorbell Chime 03
+          value: amzn_sfx_doorbell_chime_03
+        - label: Dog Bark 01
+          value: amzn_sfx_dog_bark_01
+        - label: Dog Bark 02
+          value: amzn_sfx_dog_bark_02
+        - label: Trumpet Bugle 01
+          value: amzn_sfx_trumpet_bugle_01
+        - label: Trumpet Bugle 02
+          value: amzn_sfx_trumpet_bugle_02
+        - label: Trumpet Bugle 03
+          value: amzn_sfx_trumpet_bugle_03
+        - label: Trumpet Bugle 04
+          value: amzn_sfx_trumpet_bugle_04
+        custom_value: true
+        multiple: false
+    condition: '{{ action_type == ''send_sound'' }}'
+  text_command:
+    name: Text Command
+    description: The command to send, written exactly as you would say it out loud,
+      e.g. "what's the time" or "set the volume to 5".
+    selector:
+      text:
+        multiline: true
+    condition: '{{ action_type == ''send_text_command'' }}'
