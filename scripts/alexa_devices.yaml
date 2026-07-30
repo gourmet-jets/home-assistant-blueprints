@@ -132,7 +132,6 @@ fields:
             value: tell_joke
         custom_value: true
         multiple: false
-    condition: "{{ action_type == 'info_skill' }}"
   sound:
     name: Sound
     description: The built-in Alexa sound to play, e.g. `amzn_sfx_doorbell_chime_01`,
@@ -161,7 +160,6 @@ fields:
             value: amzn_sfx_trumpet_bugle_04
         custom_value: true
         multiple: false
-    condition: "{{ action_type == 'send_sound' }}"
   text_command:
     name: Text Command
     description: The command to send, written exactly as you would say it out loud,
@@ -169,4 +167,3 @@ fields:
     selector:
       text:
         multiline: true
-    condition: "{{ action_type == 'send_text_command' }}"
