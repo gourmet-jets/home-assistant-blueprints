@@ -49,11 +49,14 @@ blueprint:
   source_url: https://github.com/gourmet-jets/home-assistant-blueprints/blob/main/scripts/alexa_devices.yaml
 mode: single
 variables:
+  # The alexa_devices.send_* services require a real device_id, NOT an entity_id.
+  # The `devices` field uses an `entity:` selector, so map those entity_ids to
+  # device_ids before calling the services (and dedupe for safety).
   target_devices: >-
     {%- if devices is defined and devices | length > 0 -%}
-      {{ devices }}
+      {{ devices | map('device_id') | unique | list }}
     {%- else -%}
-      {{ integration_entities('alexa_devices') | list }}
+      {{ integration_entities('alexa_devices') | map('device_id') | unique | list }}
     {%- endif -%}
 
 sequence:
